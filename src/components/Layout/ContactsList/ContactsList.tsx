@@ -4,17 +4,18 @@ import { Col, Row } from 'react-bootstrap'
 import List from './List'
 import style from "./style.module.scss"
 import { GetrefreshToken } from '../functions';
+import { IContactType, IFiltersTypes, IQueryFiltersTypes } from '../../../models/types';
 
 interface IProps {
-    Filters: any
+    Filters: IFiltersTypes
 }
 
 function ContactsList(props: IProps) {
     const { Filters } = props
     const [Token, setToken] = useState<string | null>(null)
     const [hasTokenExp, setHasTokenExp] = useState(false)
-    const [filterList, setFilterList] = useState<any[]>([])
-    const [contactsList, setContactsList] = useState<any[]>([])
+    const [filterList, setFilterList] = useState<IContactType[]>([])
+    const [contactsList, setContactsList] = useState<IContactType[]>([])
     useEffect(() => {
         if (localStorage.getItem("authToken")) {
             setToken(localStorage.getItem("authToken"))
@@ -44,7 +45,6 @@ function ContactsList(props: IProps) {
     }, [Token])
 
     useEffect(() => {
-        console.log(Filters)
         if (Token && Filters.status) {
             getContacts("", {
                 tags: JSON.stringify(Filters.IncludeTag),
@@ -52,9 +52,9 @@ function ContactsList(props: IProps) {
                 minMessagesSent: Filters.Message && Filters.Message['sent.min'] || 0,
                 minMessagesRecv: Filters.Message && Filters.Message['received.min'] || 0,
                 maxMessagesSent: Filters.Message && Filters.Message['sent.max'] || 0,
-                maxMessagesRecv: Filters.Message && Filters.Message['received.min'] || 0,
+                maxMessagesRecv: Filters.Message && Filters.Message['received.max'] || 0,
             })
-        } else if (Token && !Filters.status) {
+        } else if (Token && !Filters.status && Filters.cleared) {
             getContacts("");
         }
         return () => {
@@ -62,7 +62,7 @@ function ContactsList(props: IProps) {
         }
     }, [Filters, Token])
 
-    const getContacts = (searchText: string | null = "", filters: any = null) => {
+    const getContacts = (searchText: string | null = "", filters: IQueryFiltersTypes | null = null) => {
         try {
             axios.request({
                 method: 'GET',
@@ -128,7 +128,7 @@ interface ISubProps {
 const Search = (props: ISubProps) => {
     const { getContacts } = props;
 
-    const onHandleSearch = (e: any) => {
+    const onHandleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const text = (e.target.value)
         if (getContacts !== undefined)
             getContacts(text)

@@ -20,35 +20,3 @@ export const GetrefreshToken = async () => {
         console.error(error);
     });
 }
-
-export const getContacts = async (Token: string, searchText: string | null = "") => {
-    try {
-        return await axios.request({
-            method: 'GET',
-            url: 'https://api-im.chatdaddy.tech/contacts',
-            params: { q: `${searchText}` },
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${Token}`
-            }
-        }).then((response) => {
-            if (searchText != '') {
-                return response.data
-                // setFilterList([...response.data?.contacts] || [])
-                // setContactsList([])
-            } else {
-                return response.data
-                // setFilterList([])
-                // setContactsList((x) => [...x, ...response.data?.contacts] || []);
-            }
-            // setHasTokenExp(false)
-        }).catch((error) => {
-            console.log(error);
-            // setHasTokenExp(true)
-            return false
-        });
-    } catch (error) {
-        console.log("Error", error)
-        return false
-    }
-}

@@ -2,9 +2,10 @@ import React, { Fragment, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Col, Row, Spinner } from 'react-bootstrap';
 import style from "./style.module.scss"
+import { IContactType } from '../../../models/types';
 
 interface IProps {
-    contactsList: any[]
+    contactsList: IContactType[]
     getContacts: () => void
 }
 
@@ -12,9 +13,9 @@ function List(props: IProps) {
     const { contactsList, getContacts } = props
     const [selectedContacts, setSelectedContacts] = useState<string[]>([])
     const [flag, setFlag] = useState(false)
-    const onContactSelect = (e: any) => {
+    const onContactSelect = (e: React.MouseEvent<HTMLElement>) => {
         const temp: string[] = selectedContacts
-        const id = e.target.id
+        const id = (e.target as unknown as { id: string }).id
         if (temp.includes(id)) {
             temp.splice(temp.indexOf(id), 1)
         } else {

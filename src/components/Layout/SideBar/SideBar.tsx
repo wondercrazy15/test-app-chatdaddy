@@ -3,17 +3,18 @@ import { Badge, Col, ListGroup, Row } from 'react-bootstrap'
 import style from "./style.module.scss"
 import axios from "axios";
 import { GetrefreshToken } from '../functions';
+import { IFiltersTypes, IMessageTypes, ITagsTypes } from '../../../models/types';
 
 interface IProps {
-    setFilters: (arg: any) => void
-    Filters: any
+    setFilters: (arg: IFiltersTypes) => void
+    Filters: IFiltersTypes
 }
 
 function SideBar(props: IProps) {
     const { setFilters, Filters } = props
     const [Token, setToken] = useState<string | null>(null)
     const [hasTokenExp, setHasTokenExp] = useState(false)
-    const [tags, setTags] = useState<any[]>([])
+    const [tags, setTags] = useState<ITagsTypes[]>([])
     useEffect(() => {
         if (localStorage.getItem("authToken")) {
             setToken(localStorage.getItem("authToken"))
@@ -65,12 +66,12 @@ function SideBar(props: IProps) {
 
     const [IncludeTag, setIncludeTag] = useState<string[]>([])
     const [ExcludeTag, setExcludeTag] = useState<string[]>([])
-    const [Message, setMessage] = useState<any | null>(null)
+    const [Message, setMessage] = useState<IMessageTypes | null>(null)
     const [flag, setFlag] = useState(false)
 
-    const onTagInclude = (e: any) => {
+    const onTagInclude = (e: React.MouseEvent<HTMLElement>) => {
         const temp: string[] = IncludeTag
-        const tag = e.target.id
+        const tag = (e.target as unknown as { id: string }).id
         if (temp.includes(tag)) {
             temp.splice(temp.indexOf(tag), 1)
         } else {
@@ -80,9 +81,9 @@ function SideBar(props: IProps) {
         setIncludeTag(temp)
     }
 
-    const onTagExclude = (e: any) => {
+    const onTagExclude = (e: React.MouseEvent<HTMLElement>) => {
         const temp: string[] = ExcludeTag
-        const tag = e.target.id
+        const tag = (e.target as unknown as { id: string }).id
         if (temp.includes(tag)) {
             temp.splice(temp.indexOf(tag), 1)
         } else {
@@ -101,7 +102,8 @@ function SideBar(props: IProps) {
             IncludeTag,
             ExcludeTag,
             Message,
-            status: true
+            status: true,
+            cleared: false,
         })
     }
 
@@ -110,7 +112,8 @@ function SideBar(props: IProps) {
             IncludeTag,
             ExcludeTag,
             Message,
-            status: false
+            status: false,
+            cleared: true
         })
         setExcludeTag([])
         setIncludeTag([])
